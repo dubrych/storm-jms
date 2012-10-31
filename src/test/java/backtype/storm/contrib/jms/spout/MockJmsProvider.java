@@ -42,4 +42,19 @@ public class MockJmsProvider implements JmsProvider {
         return this.destination;
     }
 
+	@Override
+	public String getUsername() {
+		return null;
+	}
+
+	@Override
+	public String getPassword() {
+		return null;
+	}
+
+	@Override
+	public boolean isSecurityEnabled() {
+		return false;
+	}
+
 }

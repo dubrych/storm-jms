@@ -184,7 +184,12 @@ public class JmsBolt implements IRichBolt {
 		try {
 			ConnectionFactory cf = this.jmsProvider.connectionFactory();
 			Destination dest = this.jmsProvider.destination();
-			this.connection = cf.createConnection();
+			if (jmsProvider.isSecurityEnabled()) {
+				this.connection = cf.createConnection(
+						jmsProvider.getUsername(), jmsProvider.getPassword());
+			} else {
+				this.connection = cf.createConnection();
+			}
 			this.session = connection.createSession(this.jmsTransactional,
 					this.jmsAcknowledgeMode);
 			this.messageProducer = session.createProducer(dest);

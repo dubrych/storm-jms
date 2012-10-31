@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.ptgoetz</groupId>
 	<artifactId>storm-jms</artifactId>
-	<version>0.2.3</version>
+	<version>0.2.4</version>
 	<name>Storm JMS</name>
 	<description>Storm JMS Components</description>
 
@@ -55,7 +55,7 @@
 
 
 	<properties>
-		<storm.version>0.8.0</storm.version>
+		<storm.version>0.8.1</storm.version>
 	</properties>
 	<dependencies>
 		<dependency>

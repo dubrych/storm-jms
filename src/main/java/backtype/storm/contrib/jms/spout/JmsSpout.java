@@ -182,7 +182,12 @@ public class JmsSpout implements IRichSpout, MessageListener {
 		try {
 			ConnectionFactory cf = this.jmsProvider.connectionFactory();
 			Destination dest = this.jmsProvider.destination();
-			this.connection = cf.createConnection();
+			if (jmsProvider.isSecurityEnabled()) {
+				this.connection = cf.createConnection(
+						jmsProvider.getUsername(), jmsProvider.getPassword());
+			} else {
+				this.connection = cf.createConnection();
+			}			
 			this.session = connection.createSession(false,
 					this.jmsAcknowledgeMode);
 			MessageConsumer consumer = session.createConsumer(dest);

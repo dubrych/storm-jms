@@ -4,17 +4,20 @@ import java.io.Serializable;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
+
 /**
- * A <code>JmsProvider</code> object encapsulates the <code>ConnectionFactory</code>
- * and <code>Destination</code> JMS objects the <code>JmsSpout</code> needs to manage
- * a topic/queue connection over the course of it's lifecycle.
+ * A <code>JmsProvider</code> object encapsulates the
+ * <code>ConnectionFactory</code> and <code>Destination</code> JMS objects the
+ * <code>JmsSpout</code> needs to manage a topic/queue connection over the
+ * course of it's lifecycle.
  * 
  * @author P. Taylor Goetz
- *
+ * 
  */
-public interface JmsProvider extends Serializable{
+public interface JmsProvider extends Serializable {
 	/**
 	 * Provides the JMS <code>ConnectionFactory</code>
+	 * 
 	 * @return the connection factory
 	 * @throws Exception
 	 */
@@ -23,8 +26,25 @@ public interface JmsProvider extends Serializable{
 	/**
 	 * Provides the <code>Destination</code> (topic or queue) from which the
 	 * <code>JmsSpout</code> will receive messages.
+	 * 
 	 * @return
 	 * @throws Exception
 	 */
 	public Destination destination() throws Exception;
+
+	/**
+	 * @return username for accessing jms queue
+	 */
+	public String getUsername();
+
+	/**
+	 * @return password for accessing jms queue
+	 */
+	public String getPassword();
+
+	/**
+	 * @return <code>true</code> if jms server requires credentials
+	 *         <code>false</code> otherwise
+	 */
+	public boolean isSecurityEnabled();
 }
