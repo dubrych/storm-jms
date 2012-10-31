@@ -6,24 +6,30 @@ import java.util.List;
 import backtype.storm.spout.ISpoutOutputCollector;
 
 public class MockSpoutOutputCollector implements ISpoutOutputCollector {
-    boolean emitted = false;
+	boolean emitted = false;
 
-    @Override
-    public List<Integer> emit(String streamId, List<Object> tuple, Object messageId) {
-        emitted = true;
-        return new ArrayList<Integer>();
-    }
+	@Override
+	public List<Integer> emit(String streamId, List<Object> tuple,
+			Object messageId) {
+		emitted = true;
+		return new ArrayList<Integer>();
+	}
 
-    @Override
-    public void emitDirect(int taskId, String streamId, List<Object> tuple, Object messageId) {
-        emitted = true;
-    }
+	@Override
+	public void emitDirect(int taskId, String streamId, List<Object> tuple,
+			Object messageId) {
+		emitted = true;
+	}
 
-    public boolean emitted(){
-        return this.emitted;
-    }
-    
-    public void reset(){
-        this.emitted = false;
-    }
+	public boolean emitted() {
+		return this.emitted;
+	}
+
+	public void reset() {
+		this.emitted = false;
+	}
+
+	@Override
+	public void reportError(Throwable error) {
+	}
 }

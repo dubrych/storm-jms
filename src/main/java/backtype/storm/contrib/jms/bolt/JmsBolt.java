@@ -22,73 +22,71 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.tuple.Tuple;
 
 /**
- * A JmsBolt receives <code>backtype.storm.tuple.Tuple</code> objects from a Storm
- * topology and publishes JMS Messages to a destination (topic or queue).
+ * A JmsBolt receives <code>backtype.storm.tuple.Tuple</code> objects from a
+ * Storm topology and publishes JMS Messages to a destination (topic or queue).
  * <p/>
  * To use a JmsBolt in a topology, the following must be supplied:
  * <ol>
  * <li>A <code>JmsProvider</code> implementation.</li>
  * <li>A <code>JmsMessageProducer</code> implementation.</li>
  * </ol>
- * The <code>JmsProvider</code> provides the JMS <code>javax.jms.ConnectionFactory</code>
- * and <code>javax.jms.Destination</code> objects requied to publish JMS messages.
+ * The <code>JmsProvider</code> provides the JMS
+ * <code>javax.jms.ConnectionFactory</code> and
+ * <code>javax.jms.Destination</code> objects requied to publish JMS messages.
  * <p/>
- * The JmsBolt uses a <code>JmsMessageProducer</code> to translate 
+ * The JmsBolt uses a <code>JmsMessageProducer</code> to translate
  * <code>backtype.storm.tuple.Tuple</code> objects into
  * <code>javax.jms.Message</code> objects for publishing.
  * <p/>
- * Both JmsProvider and JmsMessageProducer must be set, or the bolt will
- * fail upon deployment to a cluster.
+ * Both JmsProvider and JmsMessageProducer must be set, or the bolt will fail
+ * upon deployment to a cluster.
  * <p/>
- * The JmsBolt is typically an endpoint in a topology -- in other words
- * it does not emit any tuples.
+ * The JmsBolt is typically an endpoint in a topology -- in other words it does
+ * not emit any tuples.
  * 
  * 
  * @author P. Taylor Goetz
- *
+ * 
  */
 public class JmsBolt implements IRichBolt {
 	private static Logger LOG = LoggerFactory.getLogger(JmsBolt.class);
-	
+
 	private boolean autoAck = true;
-	
+
 	// javax.jms objects
 	private Connection connection;
 	private Session session;
 	private MessageProducer messageProducer;
-	
+
 	// JMS options
 	private boolean jmsTransactional = false;
 	private int jmsAcknowledgeMode = Session.AUTO_ACKNOWLEDGE;
-	
-	
+
 	private JmsProvider jmsProvider;
 	private JmsMessageProducer producer;
-	
-	
+
 	private OutputCollector collector;
-	
+
 	/**
 	 * Set the JmsProvider used to connect to the JMS destination topic/queue
+	 * 
 	 * @param provider
 	 */
-	public void setJmsProvider(JmsProvider provider){
+	public void setJmsProvider(JmsProvider provider) {
 		this.jmsProvider = provider;
 	}
-	
+
 	/**
-	 * Set the JmsMessageProducer used to convert tuples
-	 * into JMS messages.
+	 * Set the JmsMessageProducer used to convert tuples into JMS messages.
 	 * 
 	 * @param producer
 	 */
-	public void setJmsMessageProducer(JmsMessageProducer producer){
+	public void setJmsMessageProducer(JmsMessageProducer producer) {
 		this.producer = producer;
 	}
-	
+
 	/**
-	 * Sets the JMS acknowledgement mode for JMS messages sent
-	 * by this bolt.
+	 * Sets the JMS acknowledgement mode for JMS messages sent by this bolt.
 	 * <p/>
 	 * Possible values:
 	 * <ul>
@@ -96,37 +94,38 @@ public class JmsBolt implements IRichBolt {
 	 * <li>javax.jms.Session.CLIENT_ACKNOWLEDGE</li>
 	 * <li>javax.jms.Session.DUPS_OK_ACKNOWLEDGE</li>
 	 * </ul>
-	 * @param acknowledgeMode (constant defined in javax.jms.Session)
+	 * 
+	 * @param acknowledgeMode
+	 *            (constant defined in javax.jms.Session)
 	 */
-	public void setJmsAcknowledgeMode(int acknowledgeMode){
+	public void setJmsAcknowledgeMode(int acknowledgeMode) {
 		this.jmsAcknowledgeMode = acknowledgeMode;
 	}
-	
+
 	/**
 	 * Set the JMS transactional setting for the JMS session.
 	 * 
 	 * @param transactional
 	 */
-//	public void setJmsTransactional(boolean transactional){
-//		this.jmsTransactional = transactional;
-//	}
-	
+	// public void setJmsTransactional(boolean transactional){
+	// this.jmsTransactional = transactional;
+	// }
+
 	/**
-	 * Sets whether or not tuples should be acknowledged by this
-	 * bolt.
+	 * Sets whether or not tuples should be acknowledged by this bolt.
 	 * <p/>
+	 * 
 	 * @param autoAck
 	 */
-	public void setAutoAck(boolean autoAck){
+	public void setAutoAck(boolean autoAck) {
 		this.autoAck = autoAck;
 	}
-
 
 	/**
 	 * Consumes a tuple and sends a JMS message.
 	 * <p/>
-	 * If autoAck is true, the tuple will be acknowledged
-	 * after the message is sent.
+	 * If autoAck is true, the tuple will be acknowledged after the message is
+	 * sent.
 	 * <p/>
 	 * If JMS sending fails, the tuple will be failed.
 	 */
@@ -134,16 +133,16 @@ public class JmsBolt implements IRichBolt {
 	public void execute(Tuple input) {
 		// write the tuple to a JMS destination...
 		LOG.debug("Tuple received. Sending JMS message.");
-		
+
 		try {
 			Message msg = this.producer.toMessage(this.session, input);
-			if(msg != null){
+			if (msg != null) {
 				this.messageProducer.send(msg);
 			}
-			if(this.autoAck){
+			if (this.autoAck) {
 				LOG.debug("ACKing tuple: " + input);
 				this.collector.ack(input);
-			}		
+			}
 		} catch (JMSException e) {
 			// failed to send the JMS message, fail the tuple fast
 			LOG.warn("Failing tuple: " + input);
@@ -176,8 +175,9 @@ public class JmsBolt implements IRichBolt {
 	@Override
 	public void prepare(Map stormConf, TopologyContext context,
 			OutputCollector collector) {
-		if(this.jmsProvider == null || this.producer == null){
-			throw new IllegalStateException("JMS Provider and MessageProducer not set.");
+		if (this.jmsProvider == null || this.producer == null) {
+			throw new IllegalStateException(
+					"JMS Provider and MessageProducer not set.");
 		}
 		this.collector = collector;
 		LOG.debug("Connecting JMS..");
@@ -188,10 +188,15 @@ public class JmsBolt implements IRichBolt {
 			this.session = connection.createSession(this.jmsTransactional,
 					this.jmsAcknowledgeMode);
 			this.messageProducer = session.createProducer(dest);
-			
+
 			connection.start();
 		} catch (Exception e) {
 			LOG.warn("Error creating JMS connection.", e);
-		}	
+		}
+	}
+
+	@Override
+	public Map<String, Object> getComponentConfiguration() {
+		return null;
 	}
 }
