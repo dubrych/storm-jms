@@ -9,6 +9,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
+import javax.jms.DeliveryMode;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -233,7 +234,7 @@ public class JmsSpout implements IRichSpout, MessageListener {
 				LOG.debug("Our deliveryMode: "
 						+ toDeliveryModeString(this.jmsAcknowledgeMode));
 				if (this.isDurableSubscription()
-						|| (msg.getJMSDeliveryMode() != Session.AUTO_ACKNOWLEDGE)) {
+						|| (msg.getJMSDeliveryMode() == DeliveryMode.PERSISTENT)) {
 					LOG.debug("Requesting acks.");
 					this.collector.emit(vals, msg.getJMSMessageID());
 
