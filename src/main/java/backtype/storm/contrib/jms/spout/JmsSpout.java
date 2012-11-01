@@ -182,6 +182,7 @@ public class JmsSpout implements IRichSpout, MessageListener {
 		this.collector = collector;
 		try {
 			ConnectionFactory cf = this.jmsProvider.connectionFactory();
+			LOG.info("Instance of connection factory {}", cf);
 			Destination dest = this.jmsProvider.destination();
 			if (jmsProvider.isSecurityEnabled()) {
 				this.connection = cf.createConnection(
