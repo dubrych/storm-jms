@@ -14,17 +14,6 @@
 	<name>Storm JMS</name>
 	<description>Storm JMS Components</description>
 
-	<distributionManagement>
-		<repository>
-			<id>public</id>
-			<url>https://ironman/nexus/content/repositories/releases/</url>
-		</repository>
-		<snapshotRepository>
-			<id>public</id>
-			<url>https://ironman/nexus/content/repositories/snapshots/</url>
-		</snapshotRepository>
-	</distributionManagement>
-
 	<repositories>
 		<repository>
 			<id>clojars.org</id>
